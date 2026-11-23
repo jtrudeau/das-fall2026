@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Speaker view — SPACE</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #0d0f12; color: #f2eee5; font-family: Inter, Helvetica, Arial, sans-serif; }
+  #wrap { display: grid; grid-template-rows: auto 1fr auto; height: 100%; }
+  header { display: flex; gap: 28px; align-items: baseline; padding: 14px 26px; border-bottom: 1px solid #2b2f36; }
+  header .big { font: 300 44px Newsreader, Georgia, serif; font-variant-numeric: tabular-nums; }
+  header .dim, .dim { color: #a8a498; }
+  #where { font-size: 17px; letter-spacing: .08em; text-transform: uppercase; color: #a8a498; margin-left: auto; text-align: right; }
+  main { padding: 20px 30px 10px; overflow: hidden; display: grid; grid-template-columns: 1fr 400px; gap: 28px; min-height: 0; }
+  #text { overflow: auto; min-height: 0; }
+  #thumbs { display: flex; flex-direction: column; gap: 10px; }
+  #thumbs .lab { font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: #6a675f; }
+  #thumbs img { width: 400px; aspect-ratio: 16 / 9; display: block; border-radius: 6px; border: 1px solid #2b2f36; background: #000; }
+  #thumbs img.next { width: 300px; opacity: .85; }
+  #title { font: 400 30px Newsreader, Georgia, serif; margin: 0 0 6px; }
+  #cue { color: #f0b44c; font-size: 18px; letter-spacing: .04em; margin-bottom: 16px; }
+  #say p { font-size: 28px; line-height: 1.42; margin: 0 0 .75em; max-width: 46em; }
+  #after p { font-size: 22px; line-height: 1.4; margin: 0 0 .6em; color: #7fc6ea; max-width: 50em; }
+  footer { border-top: 1px solid #2b2f36; padding: 12px 30px 16px; background: #14171c; max-height: 26vh; overflow: hidden; }
+  footer .lab { font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: #6a675f; }
+  #nextcue { color: #a8a498; font-size: 18px; margin: 4px 0; }
+  #nextsay { color: #6a675f; font-size: 18px; line-height: 1.35; }
+  #wait { padding: 60px 30px; font-size: 22px; color: #a8a498; }
+</style></head>
+<body><div id="wrap">
+  <header><span class="big" id="clock">--:--</span><span class="dim">clock</span><span class="big" id="timer">00:00</span><span class="dim">elapsed (Z in the deck resets)</span><span id="where"></span></header>
+  <main><div id="text"><div id="wait">Waiting for the deck. Open this window from the deck with the S key, then use either window to advance.</div>
+    <h1 id="title"></h1><div id="cue"></div><div id="say"></div><div id="after"></div></div>
+    <div id="thumbs"><div class="lab">Now</div><img id="thumbNow" alt=""><div class="lab" style="margin-top:8px">Next</div><img id="thumbNext" class="next" alt=""></div></main>
+  <footer><div class="lab">Next</div><div id="nextcue"></div><div id="nextsay"></div></footer>
+</div>
+<script>
+  let started = null;
+  const $ = (id) => document.getElementById(id);
+  for (const img of document.querySelectorAll('#thumbs img')) img.onerror = () => { img.style.visibility = 'hidden'; };
+  const para = (t) => (t || '').split(/\n\n+/).filter(Boolean).map((x) => '<p>' + x.replace(/</g, '&lt;') + '</p>').join('');
+  window.addEventListener('message', (e) => {
+    const d = e.data || {}; if (d.type !== 'deck-state') return;
+    $('wait').style.display = 'none'; started = d.started;
+    $('where').innerHTML = `${d.act || ''}<br>scene ${d.i + 1} of ${d.n} · state ${d.step + 1} of ${d.steps}`;
+    $('title').textContent = d.title;
+    $('cue').textContent = d.cur && d.cur.cue ? 'On screen: ' + d.cur.cue : '';
+    $('say').innerHTML = d.cur ? para(d.cur.say) : ''; $('after').innerHTML = d.cur ? para(d.cur.after) : '';
+    $('nextcue').textContent = d.nxt ? (d.nextTitle !== d.title ? d.nextTitle + ' — ' : '') + (d.nxt.cue || '') : d.nextTitle;
+    $('nextsay').textContent = d.nxt ? (d.nxt.say || d.nxt.after || '').slice(0, 260) : '';
+    const thumb = (img, id, k) => { if (id == null) { img.style.visibility = 'hidden'; return; } img.style.visibility = 'visible'; img.src = `media/speaker/${id}-${k}.jpg`; };
+    thumb($('thumbNow'), d.id, d.step); thumb($('thumbNext'), d.nextId, d.nextStep);
+    $('text').scrollTop = 0;
+  });
+  document.addEventListener('keydown', (e) => { if (window.opener) { window.opener.postMessage({ type: 'deck-key', key: e.key }, '*'); e.preventDefault(); } });
+  if (window.opener) window.opener.postMessage({ type: 'deck-hello' }, '*');
+  setInterval(() => { const n = new Date(); $('clock').textContent = n.toTimeString().slice(0, 5);
+    if (started) { const s = Math.floor((Date.now() - started) / 1000); $('timer').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); } else $('timer').textContent = '00:00'; }, 500);
+</script></body></html>

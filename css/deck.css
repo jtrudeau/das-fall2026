@@ -1,0 +1,134 @@
+/* AI for Science — Joel Trudeau — 20 November 2026
+   One stage, 1920 x 1080. Two palettes (T toggles). Colour carries meaning:
+   amber = proposed or predicted; blue = observed, measured or proved; red = withdrawn or wrong. */
+
+:root {
+  --bg: #0d0f12;
+  --bg2: #171b21;
+  --ink: #f2eee5;
+  --dim: #a8a498;
+  --faint: #6a675f;
+  --rule: #2b2f36;
+  --amber: #f0b44c;
+  --blue: #7fc6ea;
+  --red: #e36b55;
+  --stone-b: #07080a;
+  --stone-b-edge: #8d897e;
+  --stone-w: #f2eee5;
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", Menlo, monospace;
+  --m: 150px;              /* page margin */
+}
+:root[data-theme="light"] {
+  --bg: #f5f2ea;
+  --bg2: #ebe7dc;
+  --ink: #15171b;
+  --dim: #55534d;
+  --faint: #8e8b82;
+  --rule: #d2cec2;
+  --amber: #b06f08;
+  --blue: #1b6c99;
+  --red: #b23f2b;
+  --stone-b: #15171b;
+  --stone-b-edge: #15171b;
+  --stone-w: #fbf9f3;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+:root[data-theme="light"] body { background: #1a1a1a; }
+body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; cursor: default; }
+body.nocursor, body.nocursor * { cursor: none !important; }
+
+#stage {
+  position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px;
+  transform-origin: 0 0; background: var(--bg); overflow: hidden;
+}
+.scene { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility 0s .45s; }
+.scene.active { opacity: 1; visibility: visible; transition: opacity .45s ease; }
+.static .scene, .static .scene * { transition: none !important; animation: none !important; }
+.scene canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+
+/* step reveals: data-at / data-to are handled by the engine, which toggles .on */
+[data-at] { opacity: 0; transition: opacity .7s ease, transform .7s ease; }
+[data-at].on { opacity: 1; }
+[data-at].rise { transform: translateY(18px); }
+[data-at].rise.on { transform: none; }
+[data-at].quick { transition-duration: .25s; }
+[data-at].gone { opacity: 0 !important; }
+
+/* panels that replace one another in the same place */
+.stack { position: absolute; }
+.stack > * { position: absolute; left: 0; top: 0; width: 100%; }
+
+/* type */
+.q { font-family: var(--serif); font-weight: 350; font-size: 100px; line-height: 1.1; letter-spacing: -0.012em; margin: 0; font-optical-sizing: auto; }
+.q.m { font-size: 80px; }
+.q.s { font-size: 64px; line-height: 1.16; }
+.q em, .serif em { font-style: italic; }
+.serif { font-family: var(--serif); font-weight: 350; }
+.label { font-family: var(--sans); font-weight: 500; font-size: 25px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.cap { font-family: var(--sans); font-weight: 400; font-size: 31px; line-height: 1.35; color: var(--ink); }
+.cap.dim, .dim { color: var(--dim); }
+.faint { color: var(--faint); }
+.amber { color: var(--amber); }
+.blue { color: var(--blue); }
+.red { color: var(--red); }
+.num { font-family: var(--serif); font-weight: 300; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.01em; }
+.mono { font-family: var(--mono); }
+.credit { position: absolute; left: var(--m); bottom: 44px; font-size: 20px; letter-spacing: .02em; color: var(--faint); max-width: 1500px; line-height: 1.35; }
+.kicker { position: absolute; left: var(--m); top: 86px; }
+.abs { position: absolute; }
+.center-y { position: absolute; left: var(--m); right: var(--m); top: 50%; transform: translateY(-50%); }
+[data-at].center-y.rise { transform: translateY(calc(-50% + 18px)); }
+[data-at].center-y.rise.on { transform: translateY(-50%); }
+sup, sub { font-size: .58em; line-height: 0; }
+.frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 .12em; }
+.frac > span:first-child { border-bottom: 2px solid currentColor; padding: 0 .25em .06em; }
+.frac > span:last-child { padding: .06em .25em 0; }
+.it { font-style: italic; }
+.nowrap { white-space: nowrap; }
+
+/* photo slot */
+.photo { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.photo-missing { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px; color: var(--faint); border: 2px dashed var(--rule); margin: 60px; border-radius: 6px; }
+
+/* video excerpt */
+.clip { position: absolute; left: 240px; top: 135px; width: 1440px; height: 810px; background: #000; border: 1px solid var(--rule); }
+.clip iframe { width: 100%; height: 100%; border: 0; display: block; }
+.clip .poster { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 110px; gap: 26px; background: var(--bg2); }
+
+/* chrome: overlays that never appear in the static export */
+#blackout { position: fixed; inset: 0; background: #000; z-index: 50; display: none; }
+#overview, #help { position: fixed; inset: 0; z-index: 40; background: rgba(8,9,11,.96); color: #f2eee5; display: none; overflow: auto; padding: 48px 64px; font-family: var(--sans); }
+#overview h2, #help h2 { font-family: var(--serif); font-weight: 400; font-size: 34px; margin: 0 0 22px; }
+#overview ol { columns: 3; column-gap: 48px; margin: 0; padding: 0 0 0 2.2em; font-size: 19px; line-height: 1.75; }
+#overview li { cursor: pointer; break-inside: avoid; color: #cfcbc0; }
+#overview li.cur { color: #f0b44c; }
+#overview li .act { color: #6a675f; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; margin-left: 8px; }
+#overview li:hover { color: #fff; }
+#help table { border-collapse: collapse; font-size: 20px; }
+#help td { padding: 7px 28px 7px 0; vertical-align: top; }
+#help td:first-child { font-family: var(--mono); color: #f0b44c; white-space: nowrap; }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(8,9,11,.92); color: #e9e5db; font: 400 19px/1.5 var(--sans); padding: 14px 28px 16px; display: none; max-height: 34vh; overflow: auto; border-top: 1px solid #2b2f36; }
+#notes .cue { color: #f0b44c; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; }
+#toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 60; background: rgba(20,23,28,.95); color: #e9e5db; font: 500 16px var(--sans); padding: 9px 16px; border-radius: 6px; border: 1px solid #2b2f36; opacity: 0; transition: opacity .25s; pointer-events: none; }
+#toast.on { opacity: 1; }
+
+/* ---------- SPACE · Astronomical Society deck ---------- */
+/* certificate requirements: a rule above each, heading, then one line of detail */
+.req { border-top: 2px solid var(--rule); padding-top: 34px; }
+.req .q { min-height: 2.32em; margin: 0; }
+.req .cap { margin-top: 26px; }
+/* numbered steps */
+ol.steps { margin: 56px 0 0; padding: 0; list-style: none; counter-reset: st; }
+ol.steps li { counter-increment: st; display: grid; grid-template-columns: 70px 1fr; align-items: baseline; margin: 0 0 26px; }
+ol.steps li::before { content: counter(st); font-family: var(--serif); font-weight: 350; font-size: 50px; color: var(--dim); line-height: 1; }
+/* QR codes sit on a white card in both palettes so phones can read them */
+.qr img { width: 100%; display: block; background: #fff; border-radius: 14px; padding: 18px; box-sizing: border-box; }
+.qr .cap { margin-top: 22px; text-align: center; font-size: 26px; }
+/* something Joel has to confirm: shown on the slide on purpose, impossible to miss */
+.todo { border: 3px dashed var(--amber); border-radius: 10px; padding: 18px 26px 20px; max-width: 980px; }
+.todo .label { color: var(--amber); font-size: 20px; }
+.todo .cap { margin: 8px 0 0; color: var(--amber); }
