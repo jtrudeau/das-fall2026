@@ -167,7 +167,7 @@
 
   /* --------------------------------------------------- the Golden Record */
   Deck.add({
-    id: 'record', act: 'Voyager 1', title: 'The Golden Record', steps: 2, dur: [900, 900],
+    id: 'record', act: 'Voyager 1', title: 'The Golden Record', steps: 1,
     html: `
       <div class="abs" style="left:1040px; top:200px; width:730px">
         <p class="q m" style="margin:0">The Golden Record</p>
@@ -177,7 +177,6 @@
         <p class="cap" style="margin:8px 0 0">90 minutes of music</p>
         <p class="cap" style="margin:8px 0 0">Surf, wind, thunder, birds, whales</p>
         <p class="cap dim" style="margin:26px 0 0">Chosen by a committee chaired by Carl Sagan</p>
-        <p class="q s rise" data-at="1" style="margin-top:70px">Why send a record that may never be played?</p>
       </div>
       <div class="credit">A drawing of the record. Contents: NASA, Voyager Golden Record pages.</div>`,
     setup(el) {
@@ -198,6 +197,25 @@
           ctx.fillStyle = P.bg; ctx.beginPath(); ctx.arc(CX, CY, 7, 0, 7); ctx.fill();
         },
       };
+    },
+  });
+
+  /* ------------------------------------------ images on the Golden Record */
+  Deck.add({
+    id: 'gallery', act: 'Voyager 1', title: 'Images on the Golden Record', steps: 2, dur: [900, 900],
+    html: `
+      <div class="kicker label">Images on the Golden Record</div>
+      <div class="gallery center-y">
+        ${C.recordImages.filter(([f]) => !(C.publicSite && f.startsWith('rights/'))).map(([f, cap, credit]) => `<figure><img src="media/record/${f}" alt="${cap}"><figcaption><span class="cap">${cap}</span><span class="faint">${credit}</span></figcaption></figure>`).join('')}
+      </div>
+      <p class="q m center-y rise" data-at="1" style="text-align:center">Why send a record that<br>may never be played?</p>
+      <div class="credit">From NASA’s gallery of the record’s 115 images: science.nasa.gov/mission/voyager/golden-record-contents/images</div>`,
+    setup(el) {
+      const g = el.querySelector('.gallery');
+      const fit = () => g.classList.toggle('few', g.querySelectorAll('figure').length <= 4);
+      for (const img of g.querySelectorAll('img')) { const drop = () => { img.closest('figure').remove(); fit(); }; img.addEventListener('error', drop); if (img.complete && !img.naturalWidth) drop(); }
+      fit();
+      return { onStep(step) { g.classList.toggle('dimmed', step >= 1); } };
     },
   });
 

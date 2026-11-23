@@ -132,3 +132,14 @@ ol.steps li::before { content: counter(st); font-family: var(--serif); font-weig
 .todo { border: 3px dashed var(--amber); border-radius: 10px; padding: 18px 26px 20px; max-width: 980px; }
 .todo .label { color: var(--amber); font-size: 20px; }
 .todo .cap { margin: 8px 0 0; color: var(--amber); }
+/* images on the Golden Record: a centred grid that reflows when an image is missing */
+.gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 34px 30px; transition: opacity .6s ease; }
+.gallery figure { margin: 0; width: 300px; }
+.gallery img { width: 300px; height: 225px; object-fit: cover; display: block; border-radius: 6px; background: #000; }
+.gallery figcaption { margin-top: 12px; }
+.gallery figcaption .cap { display: block; font-size: 25px; line-height: 1.2; }
+.gallery figcaption .faint { display: block; font-size: 16px; margin-top: 4px; }
+.gallery.few figure { width: 460px; }
+.gallery.few img { width: 460px; height: 345px; }
+.gallery.dimmed { opacity: .12; }
+.static .gallery { transition: none; }

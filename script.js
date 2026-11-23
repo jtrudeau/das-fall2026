@@ -39,7 +39,13 @@ In 2012 it left the bubble of solar wind that flows out from the Sun, so it's in
 
 It will only be played if a spacefaring civilization finds one of the spacecraft.`,
      ""],
-    ["\"Why send a record that may never be played?\"",
+  ]);
+
+  S('gallery', [
+    ["Nine of the record's images, with short captions.",
+     `The first picture is just a circle. Whoever plays the record can use it to check they're decoding the pictures correctly. Then there's a map showing where our solar system is, using 14 pulsars as landmarks, DNA, people licking, eating and drinking, children around a globe, a violin with its music, Earth, an astronaut, and a Titan-Centaur rocket, the kind that launched the Voyagers.`,
+     "On the public site only the three NASA images appear; the other six are copyrighted and stay in your local copy."],
+    ["The images dim; \"Why send a record that may never be played?\"",
      `Why send a record that may never be played?`,
      "Take a few answers before moving on."],
   ]);
