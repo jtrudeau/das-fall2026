@@ -21,7 +21,7 @@
   --m: 150px;              /* page margin */
 }
 :root[data-theme="light"] {
-  --bg: #f5f2ea;
+  --bg: #f7f7f2;              /* Virlab paper (Virlab edge tokens, virlab-factory sites/virlab-waitlist) */
   --bg2: #ebe7dc;
   --ink: #15171b;
   --dim: #55534d;
