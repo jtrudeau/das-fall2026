@@ -219,6 +219,25 @@
     },
   });
 
+  /* ------------------------------------------- what is SPACE, and this year's theme */
+  Deck.add({
+    id: 'space', act: 'SPACE', title: 'What is SPACE · EMERGENCE', steps: 2, dur: [900, 900],
+    html: `
+      <div class="abs" style="left:150px; top:50%; transform:translateY(-50%); width:540px">
+        <p class="q m" style="margin:0">SPACE</p>
+        <p class="cap dim" style="margin:12px 0 0; font-style:italic">Sciences Participating with Arts and Sciences in Education</p>
+        <p class="cap" style="margin:28px 0 0">A place to think, make, experiment and share beyond the classroom</p>
+        <p class="label" style="margin:70px 0 16px">This year’s theme</p>
+        <p class="q s" style="margin:0; font-size:46px">Simple parts, simple rules, something new at a larger scale.</p>
+        <p class="q s rise" data-at="1" style="margin:44px 0 0; font-size:46px">Where do you see emergence in the sky?</p>
+      </div>
+      <div class="abs" style="right:150px; top:50%; transform:translateY(-50%); display:flex; gap:40px; align-items:center">
+        <img src="media/posters/space-tree-poster.jpg" alt="SPACE poster: Explore, Interact, Discover, Evolve" style="height:600px; border-radius:6px; display:block">
+        <img src="media/posters/emergence-poster.jpg" alt="EMERGENCE poster" style="height:600px; border-radius:6px; display:block">
+      </div>
+      <div class="credit">EMERGENCE poster: art by Alexandra Triantafillos · space.dawsoncollege.qc.ca</div>`,
+  });
+
   /* ------------------------------------------------------- certificate */
   Deck.add({
     id: 'certificate', act: 'SPACE', title: 'The certificate', steps: 1,

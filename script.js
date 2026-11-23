@@ -50,6 +50,17 @@ It will only be played if a spacefaring civilization finds one of the spacecraft
      "Take a few answers before moving on."],
   ]);
 
+  S('space', [
+    ["The SPACE and EMERGENCE posters; SPACE's full name; this year's theme.",
+     `SPACE stands for Sciences Participating with Arts and Sciences in Education. It's built on learning by doing, curiosity and working together: a place to think, make, experiment and share beyond the classroom.
+
+Our theme this year is emergence: simple parts, following simple rules, producing something at a larger scale that none of the parts has on its own.`,
+     "The EMERGENCE poster is by Alexandra Triantafillos."],
+    ["\"Where do you see emergence in the sky?\"",
+     `Where do you see emergence in the sky?`,
+     "Take a few answers."],
+  ]);
+
   S('certificate', [
     ["The three requirements.",
      `The SPACE certificate is a way to get recognition for work you do beyond the classroom, across the arts and sciences.
